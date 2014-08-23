@@ -8,6 +8,7 @@
 
 public enum nombreAtributo{
 	Fuerza,
+	Poder,
 	Destreza,
 	Velocidad,
 	Constitucion,
