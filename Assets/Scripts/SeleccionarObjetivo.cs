@@ -3,22 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SeleccionarObjetivo : MonoBehaviour {
-	public List<Transform> objetivos;
-	public Transform objetivoFijado;
-	private Transform miTransform;
+//Clase que implmeneta la seleccion y fijacion de un objetivo. Crea una lista con las componentes transform de todos los elementos
+//con Tag 'Enemigo'. Cuando se pulsa la tecla TAB, sino hay enemigo seleccionado, ordena la lista por distancia y selecciona el mas
+//cercano. Si hay un enemigo seleccionado, pasa al siguiente en la lista. Ademas, cuando selecciona un objetivo lo marca en rojo
+//y al deseleccionarlo lo pone en azul.
 
-	// Se ejecuta cuando se iniciliaza
+	public List<Transform> objetivos;  	//Lista de las componentes Transform de todos los enemigos
+	public Transform objetivoFijado;   	//Componente Transform del objetivo fijado actualmente
+	private Transform miTransform;		//Componente Transform del Personaje
+
+	//La funcion 'Start' se ejecuta cuando se carga la escena
 	void Start () {
 		objetivos = new List<Transform>();
 		//Se añaden todos los enemigos a la lista de Enemigos
 		añadirTodosEnemigos();
-		//EStablecemos el objetivo fijado como NULL
+		//Inicialmente no hay un objetivo fijado, por lo que lo fijamos como NULL
 		objetivoFijado = null;
 		//Guardamos la componente transform del Personaje
 		miTransform = transform;
 	}
 	
-	// Se ejecuta una vez cada frae
+	//La funcion 'Update' se ejecuta una vez por cada frame
 	void Update () {
 		// Si se pulsa la tecla TAB se cambia de objetivo llamando a la funcion fijarEnemigo
 		if(Input.GetKeyDown(KeyCode.Tab)){
@@ -27,23 +32,23 @@ public class SeleccionarObjetivo : MonoBehaviour {
 	
 	}
 
-	//Crear un array donde almacen todos los GameObject de los enemigos
+	//Guarda el componente transforme de los enemigos en la lista de objetivos. Para ello crea una lista con todos los GameObjects
+	//con el TAG 'Enemigo' y luego, para cada de uno de ellos guarda la componente transform en la lista de objetivos.
 	public void añadirTodosEnemigos(){
 		//Guardamos en un array de GameObjects aquellos GameObjects con el Tag "Enemigo"
 		GameObject[] listaEnemigos = GameObject.FindGameObjectsWithTag("Enemigo");
 		//Para cada enemigo, guardamos el componente transform en la lista de objetivos
 		foreach (GameObject enemigo in listaEnemigos )
-			//Para cada enemigo de la lista, guardamos su componente transform en la lista de objetivos
 			añadirEnemigo(enemigo.transform);
 	}
 
-	//Añade la componente transform de un enemigo a la lista de objetivo
+	//Añade la componente transform de un enemigo a la lista de objetivos
 	public void añadirEnemigo(Transform enemigo){
-		//Guardamos el componente transform de cada enemigo en la lista de objetivos
 		objetivos.Add(enemigo);
 	}
 
-	//Fija al objetivo que se puede atacar
+	//Fija al objetivo que se puede atacar. Sino hay ningun ojetivo gijado, ordena los objetivos por distancia y fija el mas cercano.
+	//Si ya hay un objetivo Fijado, pasa al siguiente en la lista. Si es el ultimo objetivo de la lista, tendra que pasar al primero.
 	private void fijarEnemigo(){
 		//Si no hay ningun enemigo fijado
 		if (objetivoFijado==null){
@@ -68,14 +73,14 @@ public class SeleccionarObjetivo : MonoBehaviour {
 			//fiajmos el objetivo adecuado
 			objetivoFijado = objetivos[index];
 		}
-		//SE marca el objetivo seleccionado
+		//Se marca el objetivo seleccionado
 		marcarObjetivo();
 	}
 
-	//Funcion que pinta de rojo el objetivoActual
+	//Marca el objetivo seleccionado. Lo pinta de color rojo y lo pone como objetivo del ataque del personaje
 	private void marcarObjetivo(){
 		objetivoFijado.renderer.material.color = Color.red;
-		//Fijamos como objetivo al que atacar al actual objetivo fiajod
+		//Fijamos como objetivo al que atacar por parte del personaje
 		AtaquePersonaje ataque = (AtaquePersonaje)GetComponent("AtaquePersonaje");
 		ataque.objetivo = objetivoFijado.gameObject;
 	}
